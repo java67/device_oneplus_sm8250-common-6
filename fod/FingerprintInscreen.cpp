@@ -19,6 +19,7 @@
 #include "FingerprintInscreen.h"
 #include <android-base/logging.h>
 #include <hidl/HidlTransportSupport.h>
+#include <cmath>
 #include <fstream>
 
 #define FINGERPRINT_ERROR_CANCELED 5
@@ -33,6 +34,7 @@
 #define OP_DISPLAY_AOD_MODE 8
 #define OP_DISPLAY_NOTIFY_PRESS 9
 #define OP_DISPLAY_SET_DIM 10
+
 
 namespace vendor {
 namespace lineage {
@@ -82,17 +84,31 @@ Return<void> FingerprintInscreen::onFinishEnroll() {
     return Void();
 }
 
-Return<void> FingerprintInscreen::onPress() {
-    if (mIsEnrolling) {
+Return<bool> FingerprintInscreen::noDim() {
+    return true;
+}
+
+Return<bool> FingerprintInscreen::supportsAlwaysOnHBM() {
+    return true;
+}
+
+Return<void> FingerprintInscreen::switchHbm(bool enabled) {
+    if (enabled) {
         this->mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 1);
+    } else {
+        this->mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 0);
     }
+    return Void();
+}
+
+Return<void> FingerprintInscreen::onPress() {
+
     this->mVendorDisplayService->setMode(OP_DISPLAY_NOTIFY_PRESS, 1);
 
     return Void();
 }
 
 Return<void> FingerprintInscreen::onRelease() {
-    this->mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 0);
     this->mVendorDisplayService->setMode(OP_DISPLAY_NOTIFY_PRESS, 0);
 
     return Void();
@@ -101,7 +117,6 @@ Return<void> FingerprintInscreen::onRelease() {
 Return<void> FingerprintInscreen::onShowFODView() {
     this->mFodCircleVisible = true;
     this->mVendorDisplayService->setMode(OP_DISPLAY_AOD_MODE, 0);
-    this->mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 0);
     this->mVendorDisplayService->setMode(OP_DISPLAY_NOTIFY_PRESS, 0);
 
     return Void();
@@ -110,7 +125,6 @@ Return<void> FingerprintInscreen::onShowFODView() {
 Return<void> FingerprintInscreen::onHideFODView() {
     this->mFodCircleVisible = false;
     this->mVendorDisplayService->setMode(OP_DISPLAY_AOD_MODE, 0);
-    this->mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 0);
     this->mVendorDisplayService->setMode(OP_DISPLAY_NOTIFY_PRESS, 0);
 
     return Void();
@@ -123,7 +137,7 @@ Return<bool> FingerprintInscreen::handleAcquired(int32_t acquiredInfo, int32_t v
     }
 
     if (acquiredInfo == FINGERPRINT_ACQUIRED_VENDOR) {
-        if (mFodCircleVisible && vendorCode == 0) {
+        if (vendorCode == 0) {
             Return<void> ret = mCallback->onFingerDown();
             if (!ret.isOk()) {
                 LOG(ERROR) << "FingerDown() error: " << ret.description();
@@ -131,7 +145,7 @@ Return<bool> FingerprintInscreen::handleAcquired(int32_t acquiredInfo, int32_t v
             return true;
         }
 
-        if (mFodCircleVisible && vendorCode == 1) {
+        if (vendorCode == 1) {
             Return<void> ret = mCallback->onFingerUp();
             if (!ret.isOk()) {
                 LOG(ERROR) << "FingerUp() error: " << ret.description();
@@ -165,8 +179,22 @@ Return<void> FingerprintInscreen::setLongPressEnabled(bool enabled) {
     return Void();
 }
 
-Return<int32_t> FingerprintInscreen::getDimAmount(int32_t) {
-    return 0;
+
+Return<int32_t> FingerprintInscreen::getDimAmount(int32_t brightness) {
+    int dimAmount;
+    float alpha;
+    int realBrightness = brightness * 2047 / 255;
+
+    if (realBrightness > 500) {
+        alpha = 1.0 - pow(realBrightness / 2047.0 * 430.0 / 600.0, 0.455);
+    } else {
+        alpha = 1.0 - pow(realBrightness / 1680.0, 0.455);
+    }
+    dimAmount = 255 * alpha;
+
+    LOG(INFO) << "dimAmount = " << dimAmount;
+
+    return dimAmount;
 }
 
 Return<bool> FingerprintInscreen::shouldBoostBrightness() {
@@ -200,14 +228,6 @@ Return<int32_t> FingerprintInscreen::getHbmOffDelay() {
 
 Return<int32_t> FingerprintInscreen::getHbmOnDelay() {
     return 0;
-}
-
-Return<bool> FingerprintInscreen::supportsAlwaysOnHBM() {
-    return false;
-}
-
-Return<void> FingerprintInscreen::switchHbm(bool) {
-    return Void();
 }
 
 }  // namespace implementation
