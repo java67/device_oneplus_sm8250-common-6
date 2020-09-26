@@ -388,4 +388,62 @@
     <!-- Boolean indicating whether the HWC setColorTransform function can be performed efficiently
          in hardware. -->
     <bool name="config_setColorTransformAccelerated">true</bool>
+
+    <!-- Display 90Hz blacklist. Apps that do not work well when the display refreshes at 90Hz.
+         When these apps are visible, the display's refresh rate gets fixed to 60Hz. -->
+    <string-array name="config_highRefreshRateBlacklist">
+        <item>com.touchtype.swiftkey.beta</item>
+        <item>com.touchtype.swiftkey</item>
+    </string-array>
+
+    <bool name="config_fodScreenOffDoze">false</bool>
+
+    <string name="config_sysCPUTemp">/sys/class/thermal/thermal_zone4/temp</string>
+    <string name="config_sysBatteryTemp">/sys/class/power_supply/battery/temp</string>
+    <string name="config_sysGPUFreq">/sys/kernel/gpu/gpu_clock</string>
+    <string name="config_sysGPULoad">/sys/kernel/gpu/gpu_busy</string>
+    <integer name="config_sysCPUTempMultiplier">1000</integer>
+    <integer name="config_sysBatteryTempMultiplier">10</integer>
+
+    <!-- Paths to the libraries that contain device specific key handlers -->
+    <string-array name="config_deviceKeyHandlerLibs" translatable="false">
+        <item>/system/priv-app/LineageParts/LineageParts.apk</item>
+        <item>/system/priv-app/DeviceSettings/DeviceSettings.apk</item>
+        <item>/system/priv-app/OnePlusCameraHelper/OnePlusCameraHelper.apk</item>
+    </string-array>
+
+    <!-- Names of the key handler classes -->
+    <string-array name="config_deviceKeyHandlerClasses" translatable="false">
+        <item>org.lineageos.lineageparts.gestures.KeyHandler</item>
+        <item>org.lineageos.device.DeviceSettings.KeyHandler</item>
+        <item>org.lineageos.camerahelper.KeyHandler</item>
+    </string-array>
+
+    <bool name="config_haveHigherAspectRatioScreen">true</bool>
+
+    <!-- Whether device has physical tri state switch -->
+    <bool name="config_hasAlertSlider">true</bool>
+
+	<!-- The location of the devices physical tri state switch
+         0: Left side
+         1: Right side -->
+    <integer name="config_alertSliderLocation">1</integer>
+
+   <bool name="config_enableSBCDualChannelAudio">false</bool>
+
+    <!-- Whether key handler sends intent when changing slider position -->
+    <string name="config_alertSliderIntent"></string>
+
+    <!-- Whether the device supports Smart Pixels --> 
+    <bool name="config_supportSmartPixels">true</bool>
+
+    <!-- Whether device has warp charging support -->
+    <bool name="config_hasWarpCharger">true</bool>
+
+    <!-- Smart charging -->
+    <bool name="config_smartChargingAvailable">true</bool>
+
+    <!-- Whether device supports variable refresh rate -->
+    <bool name="config_hasVariableRefreshRate">true</bool>
+    <integer name="config_defaultVariableRefreshRateSetting">2</integer>
 </resources>
