@@ -31,4 +31,6 @@
 
     <!-- The CPU temperature divider, if needed -->
     <integer name="config_cpuTempDivider" translatable="false">1000</integer>
+
+    <bool name="config_hasAltRefresh">true</bool>
 </resources>
