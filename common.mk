@@ -190,6 +190,8 @@ PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH) \
     device/oneplus/common
 
+BUILD_RR_WALLPAPERS:= true
+
 # Telephony
 PRODUCT_PACKAGES += \
     ims-ext-common \
