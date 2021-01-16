@@ -334,7 +334,7 @@ PRODUCT_PACKAGES += \
     liboffloadhal
 
 # LiveDisplay
-#PRODUCT_PACKAGES += \
+PRODUCT_PACKAGES += \
     vendor.lineage.livedisplay@2.0-service.oneplus_kona
 
 # Media
