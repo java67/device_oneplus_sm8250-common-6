@@ -143,6 +143,7 @@
 
     <!-- Default state for LiveDisplay -->
     <bool name="config_liveDisplayAvailable">true</bool>
+    <integer name="config_defaultLiveDisplayMode">2</integer>
 
     <!-- QS Header System info -->
     <string name="config_sysCPUTemp">/sys/devices/virtual/thermal/thermal_zone0/temp</string>
