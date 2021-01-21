@@ -21,7 +21,7 @@
   },
   {
     "repository":  "semdoc/proton-clang",
-    "target_path": "prebuilts/clang/host/linux-x86_proton/clang-proton",
+    "target_path": "prebuilts/clang/host/linux-x86/clang-proton",
     "branch":      "r11.1",
     "clone-depth": "1"
   }
